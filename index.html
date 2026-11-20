@@ -54,6 +54,13 @@ header .intro p{margin:0;color:var(--tx2);max-width:620px;font-size:16px}
 .lw img{filter:drop-shadow(0 0 14px rgba(70,200,255,.25));animation:glow 7s ease-in-out infinite}
 .shine{position:absolute;inset:0;-webkit-mask:url(logo.png) center/contain no-repeat;mask:url(logo.png) center/contain no-repeat;background:linear-gradient(115deg,transparent 0%,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%,transparent 100%);background-size:300% 100%;background-position:150% 0;animation:sweep 6s ease-in-out infinite;mix-blend-mode:screen}
 .brand .by{background:linear-gradient(90deg,var(--tx2) 0%,var(--tx2) 40%,#fff 50%,var(--tx2) 60%,var(--tx2) 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:sweep 6s ease-in-out infinite;animation-delay:.6s}
+.divider{overflow:visible}
+.divider .star,.divider .flare{transform-box:fill-box;transform-origin:center}
+.divider .star{animation:twinkle 6s ease-out infinite}
+.divider .flare{opacity:0;animation:flare 6s ease-out infinite}
+@keyframes twinkle{0%,80%{transform:scale(1);filter:none}86%{transform:scale(1.7);filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 12px #9fe8ff)}100%{transform:scale(1);filter:none}}
+@keyframes flare{0%,80%{opacity:0;transform:scale(.15)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+@media (prefers-reduced-motion:reduce){.divider .star,.divider .flare{animation:none}}
 @keyframes sweep{0%,55%{background-position:150% 0}85%,100%{background-position:-50% 0}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 10px rgba(70,200,255,.18))}50%{filter:drop-shadow(0 0 22px rgba(130,110,255,.38))}}
@@ -158,7 +165,7 @@ footer{margin-top:22px}
   <header>
     <div class="brand" aria-label="AURORA Trading System by Samuele Carraro">
       <div class="lw"><img src="logo.png" alt="AURORA"><span class="shine" aria-hidden="true"></span></div>
-      <svg class="divider" viewBox="0 0 210 14" aria-hidden="true"><defs><linearGradient id="dl" x1="0" x2="1"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient><linearGradient id="dr" x1="1" x2="0"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient></defs><rect x="4" y="6.5" width="88" height="1" fill="url(#dl)"/><rect x="118" y="6.5" width="88" height="1" fill="url(#dr)"/><path d="M105 0 L107 5 L112 7 L107 9 L105 14 L103 9 L98 7 L103 5Z" fill="#e8eefb"/></svg>
+      <svg class="divider" viewBox="0 0 210 14" aria-hidden="true"><defs><linearGradient id="dl" x1="0" x2="1"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient><linearGradient id="dr" x1="1" x2="0"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient></defs><rect x="4" y="6.5" width="88" height="1" fill="url(#dl)"/><rect x="118" y="6.5" width="88" height="1" fill="url(#dr)"/><defs><radialGradient id="fg"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#c9f3ff" stop-opacity=".85"/><stop offset="1" stop-color="#7fd8ff" stop-opacity="0"/></radialGradient></defs><g class="flare"><circle cx="105" cy="7" r="16" fill="url(#fg)"/><path d="M105 -7 L105.8 6 L105 21 L104.2 8Z M64 7 L104 6 L146 7 L104 8Z" fill="#fff"/></g><path class="star" d="M105 0 L107 5 L112 7 L107 9 L105 14 L103 9 L98 7 L103 5Z" fill="#e8eefb"/></svg>
       <div class="ts">Trading System</div>
       <div class="by">by Samuele Carraro</div>
     </div>
