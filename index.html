@@ -56,10 +56,10 @@ header .intro p{margin:0;color:var(--tx2);max-width:620px;font-size:16px}
 .brand .by{background:linear-gradient(90deg,var(--tx2) 0%,var(--tx2) 40%,#fff 50%,var(--tx2) 60%,var(--tx2) 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:sweep 6s ease-in-out infinite;animation-delay:.6s}
 .divider{overflow:visible}
 .divider .star,.divider .flare{transform-box:fill-box;transform-origin:center}
-.divider .star{fill:#ffd08a;filter:drop-shadow(0 0 3px rgba(255,180,90,.9)) drop-shadow(0 0 8px rgba(255,150,60,.5));animation:warm 6s linear infinite}
-.divider .flare{opacity:0;transform:scale(1.15);animation:strobe 6s linear infinite}
-@keyframes warm{0%,100%{fill:#ffd08a}83.9%{fill:#ffd08a}84%,85.4%{fill:#fff}85.5%,88.9%{fill:#ffd08a}89%,90%{fill:#fff}90.1%{fill:#ffd08a}}
-@keyframes strobe{0%,83.9%{opacity:0}84%,85.4%{opacity:1}85.5%,88.9%{opacity:0}89%,90%{opacity:1}90.1%,100%{opacity:0}}
+.divider .star{animation:twinkle 6s ease-out infinite}
+.divider .flare{opacity:0;animation:flare 6s ease-out infinite}
+@keyframes twinkle{0%,80%{transform:scale(1);filter:none}86%{transform:scale(1.7);filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 12px #9fe8ff)}100%{transform:scale(1);filter:none}}
+@keyframes flare{0%,80%{opacity:0;transform:scale(.15)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
 @media (prefers-reduced-motion:reduce){.divider .star,.divider .flare{animation:none}}
 @keyframes sweep{0%,55%{background-position:150% 0}85%,100%{background-position:-50% 0}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
