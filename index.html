@@ -397,7 +397,7 @@ function render(o,g,n,excluded,tooShort){
 
   $('cp').onclick=copySummary;
   const txt=summaryText()+'\n\n👉 Prova anche tu: '+PAGE_URL;
-  $('shWa').href='https://wa.me/?text='+encodeURIComponent(txt);
+  $('shWa').href='https://wa.me/?text='+encodeURIComponent(PAGE_URL);
   $('shTg').href='https://t.me/share/url?url='+encodeURIComponent(PAGE_URL)+'&text='+encodeURIComponent(summaryText());
   $('shLink').onclick=()=>copyText(PAGE_URL,'Link copiato');
   if(chart)chart.destroy();
