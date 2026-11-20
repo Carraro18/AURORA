@@ -398,15 +398,6 @@ function render(o,g,n,excluded,tooShort){
   $('cp').onclick=copySummary;
   const txt=summaryText()+'\n\n👉 Prova anche tu: '+PAGE_URL;
   $('shWa').href='https://wa.me/?text='+encodeURIComponent(txt);
-  $('shWa').onclick=e=>{
-    if(!navigator.share)return; // nessun menu Condividi: usa il link WhatsApp
-    e.preventDefault();
-    const href=$('shWa').href;
-    navigator.share({title:'AURORA Trading System',text:txt}).catch(err=>{
-      if(err&&err.name==='AbortError')return; // l'utente ha chiuso il menu
-      window.open(href,'_blank','noopener');
-    });
-  };
   $('shTg').href='https://t.me/share/url?url='+encodeURIComponent(PAGE_URL)+'&text='+encodeURIComponent(summaryText());
   $('shLink').onclick=()=>copyText(PAGE_URL,'Link copiato');
   if(chart)chart.destroy();
