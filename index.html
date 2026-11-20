@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURORA Trading System – Simulatore storico</title>
+<meta name="description" content="Quanto avresti guadagnato con AURORA? Simulatore sui dati storici dal 2003.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AURORA Trading System">
+<meta property="og:title" content="AURORA Trading System – Simulatore storico">
+<meta property="og:description" content="Quanto avresti guadagnato con AURORA? Prova il simulatore sui dati storici dal 2003.">
+<meta property="og:url" content="https://carraro18.github.io/aurora/">
+<meta property="og:image" content="https://carraro18.github.io/aurora/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a1630; --bg2:#0d1b38; --surface:rgba(18,32,64,.78); --surface2:#1a2c55; --line:#24375f; --grid:#1f3156;
+  --tx:#eef2fa; --tx2:#a9b6d3; --tx3:#7385aa;
+  --s1:#3987e5; --s2:#d95926;
+  --mid:#1c2b4f;
+  --gold:#ffb547; --coral:#ff7a59; --violet:#8b6cf6;
+  --accent:#ff9a4a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html{background:linear-gradient(180deg,#0b1a3c 0%,#0a1632 55%,#0b1836 100%) fixed}
+body{min-height:100vh;background:transparent!important}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;background:url(bg.jpg) center 42%/cover no-repeat}
+#sky::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,18,44,.15) 0%,rgba(8,18,44,.35) 60%,rgba(8,18,44,.6) 100%)}
+#sky svg{position:absolute;left:0;width:100%}
+#sky .au{top:0;height:62vh;min-height:380px}
+#sky .mt{position:absolute;left:0;bottom:0;width:100%;height:44vh;min-height:250px;opacity:.92}
+.wrap{position:relative;z-index:1}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+header{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;padding:14px 0 30px}
+header .intro{text-align:right;justify-self:end}
+header .intro p{margin-left:auto!important}
+header .intro h1{font-size:32px;line-height:1.2;margin:10px 0 8px;letter-spacing:-.02em;font-weight:700}
+header .intro p{margin:0;color:var(--tx2);max-width:620px;font-size:16px}
+.divider{display:block;margin:2px auto 0;width:210px;height:14px}
+@media(max-width:780px){header{grid-template-columns:1fr;gap:18px;justify-items:center;text-align:center}header .intro{text-align:center;justify-self:center}header .intro h1{font-size:25px}header .intro p{font-size:15px;margin:0 auto}}
+.brand{display:flex;flex-direction:column;align-items:center}
+.brand img{height:124px;display:block}
+.lw{position:relative;display:inline-block;animation:float 7s ease-in-out infinite}
+.lw img{filter:drop-shadow(0 0 14px rgba(70,200,255,.25));animation:glow 7s ease-in-out infinite}
+.shine{position:absolute;inset:0;-webkit-mask:url(logo.png) center/contain no-repeat;mask:url(logo.png) center/contain no-repeat;background:linear-gradient(115deg,transparent 0%,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%,transparent 100%);background-size:300% 100%;background-position:150% 0;animation:sweep 6s ease-in-out infinite;mix-blend-mode:screen}
+.brand .by{background:linear-gradient(90deg,var(--tx2) 0%,var(--tx2) 40%,#fff 50%,var(--tx2) 60%,var(--tx2) 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:sweep 6s ease-in-out infinite;animation-delay:.6s}
+@keyframes sweep{0%,55%{background-position:150% 0}85%,100%{background-position:-50% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 10px rgba(70,200,255,.18))}50%{filter:drop-shadow(0 0 22px rgba(130,110,255,.38))}}
+@media (prefers-reduced-motion:reduce){.lw,.lw img,.shine,.brand .by{animation:none}}
+.brand .ts{font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:12.5px;color:#e3eaf8;margin-top:4px;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase}
+.brand .by{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:19px;color:var(--tx2);margin-top:2px;letter-spacing:.02em}
+@media(max-width:480px){.brand img{height:96px}.brand .ts{font-size:11px}.brand .by{font-size:17px}}
+.disc{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:#ffd77a;font-weight:500;background:rgba(255,190,60,.12);border:1px solid rgba(255,190,60,.55);border-left:4px solid #ffbe3c;border-radius:12px;padding:12px 14px;margin:-4px 0 16px}
+.disc b{color:#ffe3a3;font-weight:700}
+.disc .ic{font-size:18px;line-height:1}
+.err{font-size:12.5px;color:#ff8f8f;margin-top:6px;font-weight:600}
+.sub{font-size:12px;color:var(--tx2);margin-top:4px}
+.brand svg.mark{width:52px;height:52px;flex:none}
+.word .a{font-weight:800;font-size:24px;letter-spacing:.22em;line-height:1;background:linear-gradient(90deg,var(--gold),var(--coral) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.word .b{font-size:10.5px;letter-spacing:.42em;color:var(--tx2);margin-top:6px;font-weight:600}
+.pill{font-size:12px;color:var(--tx2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:rgba(255,255,255,.02)}
+.intro{text-align:center}.intro h1{font-size:28px;line-height:1.2;margin:0 0 6px;letter-spacing:-.02em;font-weight:700}
+.intro p{margin:0 auto 28px;color:var(--tx2);max-width:640px}
+.grid{display:grid;grid-template-columns:330px minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{backdrop-filter:blur(6px);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.panel{position:sticky;top:16px}
+@media(max-width:880px){.panel{position:static}}
+@media(max-width:480px){.kpi{padding:12px}.kpi .n{font-size:11px}.intro h1{font-size:24px}}
+.card h2{font-size:15px;margin:0 0 14px;font-weight:600;letter-spacing:.01em}
+.field{margin-bottom:14px}
+label{display:block;font-size:12px;color:var(--tx2);margin-bottom:6px;font-weight:500}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);color:var(--tx);font:inherit;font-size:15px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.hint{font-size:12.5px;color:var(--gold);margin-top:6px;font-weight:500}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{background:transparent;border:0;color:var(--tx2);padding:8px;border-radius:8px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--surface2);color:var(--tx);box-shadow:0 0 0 1px var(--line)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggle{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);cursor:pointer;margin-top:4px}
+.sw{flex:none;width:40px;height:22px;border-radius:99px;background:#333a4c;position:relative;transition:.2s;margin-top:1px}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on .sw{background:var(--accent)}
+.toggle.on .sw::after{left:21px}
+.toggle b{display:block;font-size:13.5px;font-weight:600}
+.toggle span{font-size:12px;color:var(--tx2)}
+.kpis{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:16px}
+.kpi{min-width:0;overflow:hidden;backdrop-filter:blur(6px);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi .l{font-size:12px;color:var(--tx2);font-weight:500}
+.kpi .v{white-space:nowrap;font-size:clamp(19px,2.4vw,26px);font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .n{font-size:12px;color:var(--tx3);margin-top:3px}
+.hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin-bottom:12px;padding:18px 20px;border-radius:18px;border:1px solid #3b4c86;background:linear-gradient(135deg,rgba(46,220,170,.16),rgba(132,92,246,.20));backdrop-filter:blur(6px)}
+.hero .l{font-size:12.5px;color:var(--tx2);font-weight:500}
+.hero .hv{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hero .n{font-size:12.5px;color:var(--tx2);margin-top:2px}
+.hero .hp{text-align:right}
+.hero .pv{font-size:clamp(28px,4vw,40px);font-weight:800;color:#3ee6a8;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pv.neg,.pc.neg{color:#ff8f8f}
+.kpis3{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi .v2{font-size:13px;color:var(--tx2);margin-top:4px}
+.kpi .pc{font-size:18px;font-weight:700;color:#3ee6a8;margin-top:2px;font-variant-numeric:tabular-nums}
+@media(max-width:640px){.hero{grid-template-columns:1fr}.hero .hp{text-align:left}.kpis3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.kpi.main{background:linear-gradient(135deg,rgba(46,220,170,.16),rgba(132,92,246,.18));border-color:#3b4c86}
+.kpi.main .v{font-size:clamp(22px,2.9vw,32px)}
+.chartbox{position:relative;height:330px}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.chead h2{margin:0}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--tx2);flex-wrap:wrap;margin-bottom:6px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px}
+.tabs button{background:transparent;color:var(--tx2);border:0;padding:6px 10px;font:inherit;font-size:12.5px;font-weight:600;border-radius:7px;cursor:pointer}
+.tabs button.on{background:var(--surface2);color:var(--tx)}
+.stats3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.kv td{padding:7px 0;border-bottom:1px solid var(--grid);text-align:right}
+.kv td:last-child{white-space:nowrap;padding-left:8px}
+.kv tr:last-child td{border-bottom:0}
+.kv td:first-child{text-align:left;color:var(--tx2)}
+.scroll{overflow-x:auto}
+.heat{border-collapse:separate;border-spacing:3px}
+.heat td{text-align:center;font-size:11.5px;padding:6px 2px;border-radius:5px;min-width:38px}
+.heat th{font-size:11px;color:var(--tx3);font-weight:600;text-align:center}
+.heat th.y{text-align:left;color:var(--tx2);padding-right:6px}
+.note{font-size:12px;color:var(--tx3);line-height:1.55}
+.muted{color:var(--tx3);font-size:12px}
+.btn{width:100%;padding:12px 14px;border:0;border-radius:11px;background:linear-gradient(90deg,var(--gold),var(--coral));color:#1a1206;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.excl{font-size:12.5px;color:var(--gold);margin:-4px 0 14px}
+.warn{border-color:#5a2a2a;background:#2a1517;color:#ffb3b3;margin-bottom:16px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;transition:.3s;pointer-events:none}
+footer{margin-top:22px}
+.sh{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:640px){.sh{grid-template-columns:1fr 1fr}}
+.sb{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:11px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;color:#fff;border:0}
+.sb.wa{background:#25d366;color:#06301a}.sb.wa path{fill:#06301a}
+.sb.tgb{background:#2aabee}
+.sb.cl{background:var(--surface2);border:1px solid var(--line);color:var(--tx)}
+.tg{display:flex;align-items:center;gap:14px;margin-top:16px;padding:14px 18px;border-radius:16px;text-decoration:none;color:var(--tx);background:linear-gradient(90deg,rgba(42,171,238,.22),rgba(42,171,238,.08));border:1px solid rgba(42,171,238,.5)}
+.tg span{flex:1;display:flex;flex-direction:column}.tg small{color:var(--tx2);font-size:12.5px}.tg em{font-style:normal;font-weight:700;color:#7fd0ff;white-space:nowrap}
+.legal ul{margin:0;padding-left:18px;color:var(--tx2);font-size:12.5px;line-height:1.55}
+.legal li{margin-bottom:7px}
+.legal b{color:var(--tx)}
+</style>
+</head>
+<body>
+<div id="sky" aria-hidden="true"></div>
+<div class="wrap">
+  <header>
+    <div class="brand" aria-label="AURORA Trading System by Samuele Carraro">
+      <div class="lw"><img src="logo.png" alt="AURORA"><span class="shine" aria-hidden="true"></span></div>
+      <svg class="divider" viewBox="0 0 210 14" aria-hidden="true"><defs><linearGradient id="dl" x1="0" x2="1"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient><linearGradient id="dr" x1="1" x2="0"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient></defs><rect x="4" y="6.5" width="88" height="1" fill="url(#dl)"/><rect x="118" y="6.5" width="88" height="1" fill="url(#dr)"/><path d="M105 0 L107 5 L112 7 L107 9 L105 14 L103 9 L98 7 L103 5Z" fill="#e8eefb"/></svg>
+      <div class="ts">Trading System</div>
+      <div class="by">by Samuele Carraro</div>
+    </div>
+    <div class="intro">
+      <div class="pill" style="display:inline-block">Simulatore sui dati storici dal 2003</div>
+      <h1>Quanto avresti guadagnato con AURORA?</h1>
+      <p>Scegli capitale, perdita massima che accetti e periodo: il simulatore ripercorre tutti i trade storici del sistema e ti mostra il risultato.</p>
+    </div>
+  </header>
+
+
+
+  <div class="grid">
+    <aside class="card panel">
+      <h2>Impostazioni</h2>
+      <div class="field"><label for="cap">Capitale iniziale (€)</label><input id="cap" type="number" inputmode="decimal" min="100" step="any" value="15000"></div>
+      <div class="field"><label for="tol">Perdita massima che accetti (% del capitale)</label><input id="tol" type="number" inputmode="decimal" min="1" max="66" step="any" value="30"><div id="tolOut"></div></div>
+      <div class="field"><label>Come rischiare</label>
+        <div class="seg" id="seg"><button type="button" data-m="pct">% del capitale</button><button type="button" data-m="eur" class="on">€ fissi</button></div>
+        <div class="muted" id="modeNote" style="margin-top:6px">Stessa cifra a ogni trade, senza interesse composto</div>
+      </div>
+      <div class="field"><label for="risk" id="riskLbl">Rischio a trade (€)</label><input id="risk" type="number" inputmode="decimal" min="0.01" step="any" value="75"><div class="hint" id="riskHint"></div><div class="sub" id="dayHint"></div></div>
+      <div class="row2">
+        <div class="field"><label for="y1">Dall'anno</label><select id="y1"></select></div>
+        <div class="field"><label for="y2">All'anno</label><select id="y2"></select></div>
+      </div>
+      <div class="field"><label for="tax">Tasse sul guadagno (%)</label><input id="tax" type="number" inputmode="decimal" min="0" max="60" step="any" value="26"></div>
+      <div class="toggle" id="tg" role="switch" aria-checked="false" tabindex="0"><div class="sw"></div><div><b>Togli i 2 anni migliori</b><span>Prova più severa: il calcolo salta i due anni in cui il sistema ha reso di più</span></div></div>
+    </aside>
+
+    <main id="out"></main>
+  </div>
+
+  <footer class="legal card">
+    <h2>Disclaimer – avvertenze importanti</h2>
+    <ul>
+      <li><b>Simulazione ipotetica.</b> I risultati sono calcolati applicando le regole del sistema ai prezzi storici: non sono risultati di un conto reale. Le simulazioni hanno limiti noti (commissioni, slittamenti ed esecuzioni reali non inclusi; spread incluso) e possono differire, anche molto, da quanto ottenibile davvero.</li>
+      <li><b>Nessuna garanzia.</b> I risultati passati, e a maggior ragione quelli simulati, non sono indicativi né garanzia di risultati futuri.</li>
+      <li><b>Rischio elevato.</b> Il trading su valute e indici tramite CFD e leva finanziaria comporta un rischio elevato di perdere denaro rapidamente, fino all'intero capitale investito. Investi solo denaro che puoi permetterti di perdere.</li>
+      <li><b>Non è consulenza.</b> Questa pagina ha solo scopo informativo: non è una raccomandazione personalizzata, una consulenza in materia di investimenti né un'offerta o sollecitazione all'investimento. Ogni decisione resta sotto la tua responsabilità; per valutazioni sulla tua situazione rivolgiti a un consulente autorizzato.</li>
+      <li><b>Tasse.</b> Le imposte sono una stima semplificata (aliquota unica, perdite compensate nei 4 anni successivi) e non sono consulenza fiscale.</li>
+      <li><b>Dettagli tecnici.</b> Trade ricostruiti su dati a 1 minuto; calo massimo misurato sulle chiusure giornaliere (dentro la giornata può essere stato maggiore).</li>
+    </ul>
+  </footer>
+</div>
+<div id="toast"></div>
+
+<script>
+const BASE=Date.UTC(2003,0,1), DAY=86400000;
+const MESI=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+const DAYS=D.map((a,i)=>{const t=new Date(BASE+a[0]*DAY);return{i,t,y:t.getUTCFullYear(),m:t.getUTCMonth(),k:t.toISOString().slice(0,10),r:a.slice(1).map(x=>x/100)}});
+const Y0=DAYS[0].y, YN=DAYS[DAYS.length-1].y;
+const $=id=>document.getElementById(id);
+const capEl=$('cap'),riskEl=$('risk'),y1=$('y1'),y2=$('y2'),taxEl=$('tax'),tg=$('tg');
+for(let y=Y0;y<=YN;y++){y1.add(new Option(y,y));y2.add(new Option(y,y));}
+y1.value=Math.max(Y0,2020);y2.value=YN;
+let mode='eur', dropBest=false;
+const PAGE_URL='https://carraro18.github.io/aurora/';
+const TG_URL='https://t.me/+cAgJJ-rI9ok3ZTY8'; // link del canale Telegram (es. https://t.me/nomecanale)
+const MAXT=Math.max(...DAYS.map(d=>d.r.length));
+
+const fmt=(v,d)=>Math.abs(v).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:'always'});
+const eur=(v,d=0)=>(v<0?'−':'')+'€ '+fmt(v,d);
+const pct=(v,d=1)=>(v<0?'−':'')+fmt(v,d)+'%';
+const num=(v,d=2)=>(v<0?'−':'')+fmt(v,d);
+
+function updHint(){
+  const c=+capEl.value, r=+riskEl.value;
+  if(!(c>0&&r>0)){$('riskHint').textContent='';return;}
+  const e=mode==='pct'?c*r/100:r, p=mode==='pct'?r:r/c*100;
+  $('riskHint').textContent = mode==='pct' ? '= '+eur(e,e<100?2:0)+' a trade sul capitale iniziale' : '= '+pct(p,2)+' del capitale iniziale';
+  $('dayHint').textContent='Rischio massimo giornaliero: '+eur(MAXT*e,MAXT*e<100?2:0)+' ('+pct(MAXT*p,1)+' del capitale), se tutti i trade del giorno chiudono in perdita';
+}
+// rischio a trade dalla perdita massima accettata: il peggior calo storico (2003-oggi) deve restare entro 2/3 della soglia
+function histDD(rp){
+  const days=DAYS; const S=slow(Y0); let eq=1,pk=1,mdd=0;
+  for(const d of days){let k=rp/100*(S.has(d.i)?0.5:1);eq*=1+d.r.reduce((a,b)=>a+b,0)*k;if(eq<=0)return 1;if(eq>pk)pk=eq;const dd=1-eq/pk;if(dd>mdd)mdd=dd;}
+  return mdd;
+}
+const MARGIN=1.5;
+function fromTol(){
+  const t=+$('tol').value, o=$('tolOut'), c=+capEl.value;
+  if(!(t>0)){o.innerHTML='';return false;}
+  if(t>66){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: il massimo è 66%.</div>';return false;}
+  const target=t/100/MARGIN; let lo=0.001,hi=10;
+  for(let k=0;k<40;k++){const m=(lo+hi)/2; if(histDD(m)>target)hi=m; else lo=m;}
+  const rp=Math.max(Math.round(lo*100)/100,0.01), hd=histDD(rp)*100;
+  riskEl.value = mode==='pct' ? rp : Math.round(c*rp/100*100)/100;
+  o.innerHTML='<div class="hint">Rischio a trade calcolato: '+pct(rp,2)+(c>0?' = '+eur(c*rp/100,c*rp/100<100?2:0):'')+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
+  return true;
+}
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{
+  if(mode===b.dataset.m)return;
+  const c=+capEl.value, r=+riskEl.value;
+  mode=b.dataset.m;
+  document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));
+  if(c>0&&r>0) riskEl.value = mode==='eur' ? Math.round(c*r/100*100)/100 : Math.round(r/c*100*1000)/1000;
+  $('riskLbl').textContent = mode==='pct'?'Rischio a trade (%)':'Rischio a trade (€)';
+  $('modeNote').textContent = mode==='pct'?'Il rischio cresce con il conto (interesse composto)':'Stessa cifra a ogni trade, senza interesse composto';
+  run();
+});
+function setTg(v){dropBest=v;tg.classList.toggle('on',v);tg.setAttribute('aria-checked',v);run();}
+tg.onclick=()=>setTg(!dropBest);
+tg.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();setTg(!dropBest);}};
+[riskEl,taxEl].forEach(e=>e.addEventListener('input',()=>{updHint();clearTimeout(window._t);window._t=setTimeout(run,250);}));
+[capEl,$('tol')].forEach(e=>e.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(()=>{fromTol();run();},250);}));
+[y1,y2].forEach(e=>e.addEventListener('change',run));
+
+function slow(startY){const s=new Set();(Q[startY]||[]).forEach(([a,b])=>{for(let i=a;i<=b;i++)s.add(i)});return s;}
+
+function simulate(o,days,payTax){
+  const S=slow(o.y1);
+  let eq=o.cap, ruined=false, curY=null, yStart=eq, carry=[], totTax=0;
+  const curve=[];
+  function closeYear(y){
+    const p=eq-yStart; let tax=0;
+    if(o.tax>0){
+      carry=carry.filter(c=>c.y>=y-4);
+      if(p>0){let b=p;for(const c of carry){const u=Math.min(c.amt,b);c.amt-=u;b-=u;}carry=carry.filter(c=>c.amt>0.005);tax=b*o.tax/100;}
+      else if(p<0)carry.push({y,amt:-p});
+    }
+    totTax+=tax; if(payTax)eq-=tax; yStart=eq;
+  }
+  for(const d of days){
+    if(curY!==null&&d.y!==curY)closeYear(curY);
+    curY=d.y;
+    if(ruined){curve.push({...d,eq:0,pnl:0});continue;}
+    let risk=o.mode==='pct'?eq*o.risk/100:o.risk;
+    if(S.has(d.i))risk*=0.5;
+    const pnl=d.r.reduce((a,b)=>a+b,0)*risk;
+    eq+=pnl; if(eq<=0){eq=0;ruined=true;}
+    curve.push({...d,eq,pnl});
+  }
+  if(curY!==null)closeYear(curY);
+  return{curve,eq,totTax,ruined};
+}
+
+let chart=null, scaleType='linear';
+function run(){
+  updHint();
+  let a=+y1.value,b=+y2.value; if(b<a){[a,b]=[b,a];}
+  const o={cap:+capEl.value,mode,risk:+riskEl.value,y1:a,y2:b,tax:+taxEl.value||0};
+  if(!(o.cap>0&&o.risk>0))return;
+  let days=DAYS.filter(d=>d.y>=a&&d.y<=b), excluded=[];
+  if(dropBest){
+    const ys={};days.forEach(d=>{ys[d.y]=(ys[d.y]||0)+d.r.reduce((x,y)=>x+y,0)});
+    const keys=Object.keys(ys);
+    if(keys.length>=4){excluded=keys.sort((p,q)=>ys[q]-ys[p]).slice(0,2).map(Number).sort();days=days.filter(d=>!excluded.includes(d.y));}
+  }
+  const g=simulate(o,days,false), n=simulate(o,days,true);
+  render(o,g,n,excluded,dropBest&&!excluded.length);
+}
+
+function render(o,g,n,excluded,tooShort){
+  const c=g.curve, out=$('out');
+  if(!c.length){out.innerHTML='<div class="card">Nessun trade nel periodo scelto.</div>';return;}
+  let nT=0,w=0,gp=0,gl=0,maxSt=0,st=0;
+  c.forEach(d=>d.r.forEach(r=>{nT++;if(r>0){w++;gp+=r;st=0}else{gl-=r;st++;if(st>maxSt)maxSt=st}}));
+  let pk=o.cap,mdd=0,mddE=0;c.forEach(d=>{if(d.eq>pk)pk=d.eq;const dd=(pk-d.eq)/pk*100;if(dd>mdd)mdd=dd;if(pk-d.eq>mddE)mddE=pk-d.eq;});
+  const span=(c[c.length-1].t-new Date(Date.UTC(o.y1,0,1)))/DAY/365.25 - excluded.length;
+  const yrs=Math.max(span,0.1);
+  const grossP=g.eq-o.cap, netP=n.eq-o.cap;
+  const cg=g.eq>0?(Math.pow(g.eq/o.cap,1/yrs)-1)*100:-100, cn=n.eq>0?(Math.pow(n.eq/o.cap,1/yrs)-1)*100:-100;
+  const posD=c.filter(d=>d.pnl>0).length;
+  const best=c.reduce((a,b)=>b.pnl>a.pnl?b:a), worst=c.reduce((a,b)=>b.pnl<a.pnl?b:a);
+  const months={},years={};let prev=o.cap;
+  c.forEach(d=>{const mk=d.y*12+d.m;if(!months[mk])months[mk]={y:d.y,m:d.m,start:prev,pnl:0};if(!years[d.y])years[d.y]={start:prev,pnl:0};months[mk].pnl+=d.pnl;years[d.y].pnl+=d.pnl;prev=d.eq;});
+  const mA=Object.values(months), posM=mA.filter(m=>m.pnl>0).length;
+  const yK=Object.keys(years).map(Number), posY=yK.filter(y=>years[y].pnl>0).length;
+  const mp=m=>m.pnl/m.start*100;
+  const bestM=mA.reduce((a,b)=>mp(b)>mp(a)?b:a), worstM=mA.reduce((a,b)=>mp(b)<mp(a)?b:a);
+  const riskTxt=o.mode==='pct'?num(o.risk,2)+'% del capitale a trade':eur(o.risk)+' fissi a trade';
+  const period=o.y1+'–'+o.y2;
+  window._s={o,g,n,grossP,netP,cg,cn,mdd,nT,w,posM,mA,posY,yK,riskTxt,excluded,period};
+
+  out.innerHTML=`
+  ${g.ruined?'<div class="card warn">Con questo rischio il conto sarebbe andato a zero: prova un rischio più basso.</div>':''}
+  ${excluded.length?`<div class="excl">Anni esclusi dal calcolo: ${excluded.join(' e ')}</div>`:''}
+  ${tooShort?'<div class="excl">Per togliere i 2 anni migliori scegli un periodo di almeno 4 anni.</div>':''}
+  <div class="hero">
+    <div><div class="l">Capitale finale netto</div><div class="hv">${eur(n.eq)}</div><div class="n">${eur(o.cap)} iniziali + ${eur(netP)} di guadagno netto · ${period}</div></div>
+    <div class="hp"><div class="l">Guadagno netto nel periodo</div><div class="pv ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,netP/o.cap*100>=1000?0:1)}</div><div class="n">${pct(cn)} medio all'anno</div></div>
+  </div>
+  <div class="kpis3">
+    <div class="kpi"><div class="l">Guadagno netto</div><div class="v">${eur(netP)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,0)}</div><div class="n">dopo ${eur(n.totTax)} di tasse</div></div>
+    <div class="kpi"><div class="l">Guadagno lordo</div><div class="v">${eur(grossP)}</div><div class="pc ${grossP<0?'neg':''}">${grossP>=0?'+':''}${pct(grossP/o.cap*100,0)}</div><div class="n">${pct(cg)} medio all'anno</div></div>
+    <div class="kpi"><div class="l">Guadagno medio annuo</div><div class="v">${eur(netP/yrs)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100/yrs,1)} all'anno</div><div class="n">lordo ${eur(grossP/yrs)} (${pct(grossP/o.cap*100/yrs,1)})</div></div>
+    <div class="kpi"><div class="l">Calo massimo</div><div class="v">${pct(-mdd)}</div><div class="pc neg" style="font-size:14px">${eur(-mddE)}</div><div class="n">nel momento peggiore</div></div>
+  </div>
+  <div class="disc"><span class="ic">⚠️</span><span><b>Risultati statistici, non garanzia di rendimenti futuri.</b> Sono ottenuti simulando il sistema sui dati storici: mostrano come sarebbe andata in passato, non come andrà in futuro.</span></div>
+
+  <div class="card">
+    <div class="chead"><h2>Andamento del conto</h2><div class="tabs"><button data-s="linear" class="${scaleType==='linear'?'on':''}">Normale</button><button data-s="logarithmic" class="${scaleType!=='linear'?'on':''}">Logaritmica</button></div></div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>Lordo</span><span><i style="background:var(--s2)"></i>Netto (tasse pagate ogni anno)</span></div>
+    <div class="chartbox"><canvas id="cEq" aria-label="Grafico del capitale nel tempo"></canvas></div>
+  </div>
+
+  <div class="stats3">
+    <div class="card"><h2>Trade</h2><table class="kv">
+      <tr><td>Numero di trade</td><td>${nT.toLocaleString('it-IT')}</td></tr>
+      <tr><td>Trade vincenti</td><td>${pct(w/nT*100)}</td></tr>
+      <tr><td>Profit factor</td><td>${num(gp/gl)}</td></tr>
+      <tr><td>Perdite di fila (max)</td><td>${maxSt}</td></tr>
+    </table></div>
+    <div class="card"><h2>Giorni</h2><table class="kv">
+      <tr><td>Rischio massimo giornaliero</td><td>${eur(MAXT*(o.mode==='pct'?o.cap*o.risk/100:o.risk))}</td></tr>
+      <tr><td>Giorni positivi</td><td>${pct(posD/c.length*100,0)}</td></tr>
+      <tr><td>Media al giorno</td><td>${eur(grossP/c.length,2)}</td></tr>
+      <tr><td>Giorno migliore</td><td>${eur(best.pnl)}</td></tr>
+      <tr><td>Giorno peggiore</td><td>${eur(worst.pnl)}</td></tr>
+    </table></div>
+    <div class="card"><h2>Mesi e anni</h2><table class="kv">
+      <tr><td>Mesi positivi</td><td>${posM} su ${mA.length}</td></tr>
+      <tr><td>Media al mese</td><td>${eur(grossP/mA.length)}</td></tr>
+      <tr><td>Mese migliore / peggiore</td><td>${pct(mp(bestM))} / ${pct(mp(worstM))}</td></tr>
+      <tr><td>Anni positivi</td><td>${posY} su ${yK.length}</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card" style="margin-top:16px"><h2>Mese per mese</h2><p class="muted" style="margin:-8px 0 10px">Guadagno lordo in % sul capitale di inizio mese</p><div class="scroll"><table class="heat">
+    <tr><th></th>${MESI.map(m=>`<th>${m}</th>`).join('')}<th>Anno</th></tr>
+    ${yK.map(y=>{let r=`<tr><th class="y">${y}</th>`;for(let m=0;m<12;m++){const M=months[y*12+m];if(!M){r+='<td></td>';continue;}const p=mp(M);r+=`<td style="${heat(p)}" title="${MESI[m]} ${y}: ${pct(p,2)} · ${eur(M.pnl)}">${num(p,1)}</td>`;}const Y=years[y];r+=`<td style="font-weight:700;background:var(--surface2)">${num(Y.pnl/Y.start*100,1)}</td></tr>`;return r}).join('')}
+  </table></div></div>
+
+  ${TG_URL?`<a class="tg" href="${TG_URL}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#2aabee"/><path d="M5.5 11.8l11.2-4.3c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.3-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z" fill="#fff"/></svg><span><b>Segui AURORA su Telegram</b><small>Risultati settimanali del conto reale</small></span><em>Apri il canale →</em></a>`:''}
+  <div class="card" style="margin-top:16px">
+    <h2>Condividi il simulatore</h2>
+    <p class="muted" style="margin:-6px 0 12px">Invia la pagina con il tuo risultato: chi la apre può fare la propria simulazione.</p>
+    <div class="sh">
+      <a class="sb wa" id="shWa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.6 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5-4.5-.2-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.4z"/></svg>WhatsApp</a>
+      <a class="sb tgb" id="shTg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#fff" d="M3.5 11.4l15.6-6c.7-.3 1.4.2 1.1 1.3l-2.7 12.6c-.2.9-.7 1.1-1.4.7l-4-2.9-1.9 1.9c-.2.2-.4.4-.8.4l.3-4.1 7.5-6.8c.3-.3-.1-.5-.5-.2l-9.3 5.9-4-1.3c-.9-.3-.9-.9.1-1.5z"/></svg>Telegram</a>
+      <button class="sb cl" id="shLink">🔗 Copia link</button>
+      <button class="sb cl" id="cp">📋 Copia riepilogo</button>
+    </div>
+  </div>`;
+
+  $('cp').onclick=copySummary;
+  const txt=summaryText()+'\n\n👉 Prova anche tu: '+PAGE_URL;
+  $('shWa').href='https://wa.me/?text='+encodeURIComponent(txt);
+  $('shWa').onclick=e=>{
+    if(!navigator.share)return; // nessun menu Condividi: usa il link WhatsApp
+    e.preventDefault();
+    const href=$('shWa').href;
+    navigator.share({title:'AURORA Trading System',text:txt}).catch(err=>{
+      if(err&&err.name==='AbortError')return; // l'utente ha chiuso il menu
+      window.open(href,'_blank','noopener');
+    });
+  };
+  $('shTg').href='https://t.me/share/url?url='+encodeURIComponent(PAGE_URL)+'&text='+encodeURIComponent(summaryText());
+  $('shLink').onclick=()=>copyText(PAGE_URL,'Link copiato');
+  if(chart)chart.destroy();
+  Chart.defaults.font.family='Inter,system-ui,sans-serif';Chart.defaults.color='#a8afbf';
+  chart=new Chart($('cEq'),{type:'line',data:{labels:c.map(d=>d.k),datasets:[
+    {label:'Lordo',data:c.map(d=>d.eq),borderColor:'#3987e5',borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:0},
+    {label:'Netto',data:n.curve.map(d=>d.eq),borderColor:'#d95926',borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:0}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#13244a',borderColor:'#2b4170',borderWidth:1,padding:10,callbacks:{title:i=>i[0].label.split('-').reverse().join('/'),label:i=>' '+i.dataset.label+': '+eur(i.raw)}}},
+      scales:{x:{grid:{display:false},ticks:{maxTicksLimit:7,maxRotation:0,callback:function(v){return this.getLabelForValue(v).slice(0,4)}}},
+        y:{type:scaleType,min:Math.floor(Math.min(o.cap,...c.map(d=>d.eq),...n.curve.map(d=>d.eq))*0.98),grid:{color:'#1f3156'},border:{display:false},ticks:{maxTicksLimit:6,callback:v=>eur(v)}}}}});
+  document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{scaleType=b.dataset.s;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));chart.options.scales.y.type=scaleType;chart.update();});
+}
+
+function heat(p){
+  if(Math.abs(p)<0.05)return'background:var(--mid);color:var(--tx3)';
+  const a=Math.min(Math.abs(p)/6,1), col=p>0?'57,135,229':'230,103,103';
+  return `background:rgba(${col},${(0.14+a*0.7).toFixed(2)});color:${a>0.5?'#fff':'var(--tx)'}`;
+}
+
+function summaryText(){const s=window._s;if(!s)return'';const o=s.o;return `🌅 AURORA Trading System
+Simulazione ${s.period}${s.excluded.length?' (senza i 2 anni migliori: '+s.excluded.join(' e ')+')':''}
+
+Capitale iniziale: ${eur(o.cap)}
+Rischio: ${s.riskTxt}
+
+💰 Capitale finale netto: ${eur(s.n.eq)}
+📈 Guadagno lordo: ${eur(s.grossP)} (${pct(s.cg)} l'anno)
+🧾 Guadagno netto (tasse ${num(o.tax,0)}%): ${eur(s.netP)} (${pct(s.cn)} l'anno)
+📉 Calo massimo: ${pct(-s.mdd)}
+🎯 Trade vincenti: ${pct(s.w/s.nT*100)} su ${s.nT.toLocaleString('it-IT')}
+🗓 Mesi positivi: ${s.posM}/${s.mA.length} · anni positivi: ${s.posY}/${s.yK.length}
+
+Simulazione su dati storici, non garanzia di risultati futuri.`;}
+function copyText(t,msg){const ok=()=>toast(msg);if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok).catch(()=>fb(t,ok));else fb(t,ok);}
+function copySummary(){copyText(summaryText()+'\n\n👉 Prova anche tu: '+PAGE_URL,'Riepilogo copiato');}
+function fb(t,ok){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){toast('Copia non riuscita')}a.remove();}
+function toast(m){const e=$('toast');e.textContent=m;e.style.opacity=1;setTimeout(()=>e.style.opacity=0,2000);}
+
+
+
+
+
+
+fromTol();run();
+</script>
+</body>
+</html>
