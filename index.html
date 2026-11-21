@@ -245,14 +245,16 @@ function histDD(rp){
   for(const d of days){let k=rp/100*(S.has(d.i)?0.5:1);eq*=1+d.r.reduce((a,b)=>a+b,0)*k;if(eq<=0)return 1;if(eq>pk)pk=eq;const dd=1-eq/pk;if(dd>mdd)mdd=dd;}
   return mdd;
 }
-const MARGIN=1.5;
+const MARGIN=1.5, TOLMAX=66;
+function riskForTol(t){const target=t/100/MARGIN; let lo=0.001,hi=10;
+  for(let k=0;k<40;k++){const m=(lo+hi)/2; if(histDD(m)>target)hi=m; else lo=m;}
+  return Math.max(Math.round(lo*100)/100,0.01);}
+let _rmax=null; const RMAX=()=>_rmax??(_rmax=riskForTol(TOLMAX)); // rischio massimo a trade (%) ammesso
 function fromTol(){
   const t=+$('tol').value, o=$('tolOut'), c=+capEl.value;
   if(!(t>0)){o.innerHTML='';return false;}
   if(t>66){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: il massimo è 66%.</div>';return false;}
-  const target=t/100/MARGIN; let lo=0.001,hi=10;
-  for(let k=0;k<40;k++){const m=(lo+hi)/2; if(histDD(m)>target)hi=m; else lo=m;}
-  const rp=Math.max(Math.round(lo*100)/100,0.01), hd=histDD(rp)*100;
+  const rp=riskForTol(t), hd=histDD(rp)*100;
   riskEl.value = mode==='pct' ? rp : Math.round(c*rp/100*100)/100;
   o.innerHTML='<div class="hint">Rischio a trade calcolato: '+pct(rp,2)+(c>0?' = '+eur(c*rp/100,c*rp/100<100?2:0):'')+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
   return true;
@@ -309,6 +311,14 @@ function run(){
   let a=+y1.value,b=+y2.value; if(b<a){[a,b]=[b,a];}
   const o={cap:+capEl.value,mode,risk:+riskEl.value,y1:a,y2:b,tax:+taxEl.value||0};
   if(!(o.cap>0&&o.risk>0))return;
+  const tol=+$('tol').value, rp=o.mode==='pct'?o.risk:o.risk/o.cap*100, rm=RMAX();
+  if(tol>TOLMAX||rp>rm+0.0001){
+    if(chart){chart.destroy();chart=null;}
+    const maxE=o.cap*rm/100;
+    $('riskHint').innerHTML='<span class="err" style="margin:0">Rischio troppo elevato per il capitale indicato</span>';
+    $('out').innerHTML=`<div class="card warn" style="font-size:15px;line-height:1.5"><b>⛔ Rischio troppo elevato per il capitale indicato.</b><br>Con ${eur(o.cap)} di capitale il rischio massimo a trade è <b>${eur(maxE,maxE<100?2:0)} (${pct(rm,2)})</b>, che corrisponde alla perdita massima accettabile del ${TOLMAX}%.<br>Hai inserito ${o.mode==='pct'?pct(rp,2)+' = '+eur(o.cap*rp/100,0):eur(o.risk,0)+' = '+pct(rp,2)} a trade: abbassa il rischio per vedere la simulazione.</div>`;
+    return;
+  }
   let days=DAYS.filter(d=>d.y>=a&&d.y<=b), excluded=[];
   if(dropBest){
     const ys={};days.forEach(d=>{ys[d.y]=(ys[d.y]||0)+d.r.reduce((x,y)=>x+y,0)});
