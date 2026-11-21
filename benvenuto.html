@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURORA Trading System – Cos'è AURORA</title>
+<meta name="description" content="AURORA è un sistema di trading automatico su valute e indici, con un conto reale. Ogni sera il risultato del giorno, guadagni e perdite.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AURORA Trading System">
+<meta property="og:title" content="Cos'è AURORA – Trading System by Samuele Carraro">
+<meta property="og:description" content="Un sistema di trading automatico su valute e indici, con un conto reale. Ogni sera il risultato del giorno, guadagni e perdite.">
+<meta property="og:url" content="https://carraro18.github.io/AURORA/benvenuto.html">
+<meta property="og:image" content="https://carraro18.github.io/AURORA/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0a1630;--bg2:#0d1b38;--surface:rgba(18,32,64,.78);--surface2:#1a2c55;--line:#24375f;--tx:#eef2fa;--tx2:#a9b6d3;--tx3:#7385aa;--gold:#ffb547;--coral:#ff7a59;--violet:#8b6cf6}
+*{box-sizing:border-box}
+html{background:linear-gradient(180deg,#0b1a3c 0%,#0a1632 55%,#0b1836 100%) fixed}
+html,body{margin:0;color:var(--tx);font:15.5px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{min-height:100vh;background:transparent}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;background:url(bg.jpg) center 42%/cover no-repeat}
+#sky::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,18,44,.15) 0%,rgba(8,18,44,.45) 55%,rgba(8,18,44,.75) 100%)}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 16px 56px}
+header{display:flex;flex-direction:column;align-items:center;padding:12px 0 22px;text-align:center}
+.brand{display:flex;flex-direction:column;align-items:center}
+.brand img{height:130px;display:block}
+.lw{position:relative;display:inline-block;animation:float 7s ease-in-out infinite}
+.lw img{filter:drop-shadow(0 0 14px rgba(70,200,255,.25));animation:glow 7s ease-in-out infinite}
+.shine{position:absolute;inset:0;-webkit-mask:url(logo.png) center/contain no-repeat;mask:url(logo.png) center/contain no-repeat;background:linear-gradient(115deg,transparent 0%,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%,transparent 100%);background-size:300% 100%;background-position:150% 0;animation:sweep 6s ease-in-out infinite;mix-blend-mode:screen}
+.divider{display:block;margin:2px auto 0;width:210px;height:14px;overflow:visible}
+.divider .star,.divider .flare{transform-box:fill-box;transform-origin:center}
+.divider .star{animation:twinkle 6s ease-out infinite}.divider .flare{opacity:0;animation:flare 6s ease-out infinite}
+@keyframes twinkle{0%,80%{transform:scale(1);filter:none}86%{transform:scale(1.7);filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 12px #9fe8ff)}100%{transform:scale(1);filter:none}}
+@keyframes flare{0%,80%{opacity:0;transform:scale(.15)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes sweep{0%,55%{background-position:150% 0}85%,100%{background-position:-50% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 10px rgba(70,200,255,.18))}50%{filter:drop-shadow(0 0 22px rgba(130,110,255,.38))}}
+.brand .ts{font-weight:600;font-size:12.5px;color:#e3eaf8;margin-top:4px;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase}
+.brand .by{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:19px;margin-top:2px;letter-spacing:.02em;background:linear-gradient(90deg,var(--tx2) 0%,var(--tx2) 40%,#fff 50%,var(--tx2) 60%,var(--tx2) 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sweep 6s ease-in-out infinite;animation-delay:.6s}
+@media (prefers-reduced-motion:reduce){.lw,.lw img,.shine,.brand .by,.divider .star,.divider .flare{animation:none}}
+.pill{display:inline-block;margin-top:16px;font-size:12.5px;color:var(--tx2);border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:rgba(255,255,255,.03)}
+h1{font-size:27px;line-height:1.2;margin:10px 0 0;font-weight:700;letter-spacing:-.01em}
+.card{backdrop-filter:blur(6px);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:12px}
+h2{color:var(--gold);font-size:17px;margin:0 0 8px}
+p{margin:0 0 8px} ul{margin:0;padding-left:20px} li{margin:4px 0} a{color:var(--gold)}
+.btn{display:inline-block;text-decoration:none;font-weight:700;color:#1a1206;background:linear-gradient(90deg,var(--gold),var(--coral));padding:12px 22px;border-radius:11px}
+.center{text-align:center} .center p{color:var(--tx2)}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+nav a{color:var(--tx);text-decoration:none;border:1px solid var(--line);border-radius:11px;padding:10px 14px;font-size:14px;font-weight:600;background:var(--surface2)}
+nav a.on{color:#1a1206;background:linear-gradient(90deg,var(--gold),var(--coral));border-color:transparent}
+footer{margin-top:20px;font-size:12.5px;color:var(--tx2);line-height:1.5;text-align:center}
+.searchlbl{margin:0 0 8px;color:var(--gold);font-weight:700;font-size:15.5px}
+.search{position:relative;margin:0 0 12px}
+.search input{width:100%;padding:13px 16px 13px 46px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--tx);font:inherit;font-size:16px;outline:none}
+.search input:focus{border-color:var(--gold)}
+.search .lens{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:18px}
+.tools{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;color:var(--tx2);font-size:13px}
+.tools button{background:var(--surface2);border:1px solid var(--line);color:var(--tx2);border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer}
+details{backdrop-filter:blur(6px);background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+summary{list-style:none;cursor:pointer;padding:15px 48px 15px 18px;position:relative;color:var(--gold);font-weight:650;font-size:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--tx2)}
+details[open] summary::after{content:"–"} details[open]{border-color:#ffb54788}
+.ans{padding:0 18px 16px;color:var(--tx)} .ans p{margin:0}
+.none{display:none;text-align:center;color:var(--tx2);padding:12px}
+.step{display:flex;gap:14px;align-items:flex-start;margin:10px 0}
+.num{flex:0 0 32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#1a1206;background:linear-gradient(135deg,var(--gold),var(--coral))}
+@media(max-width:480px){.brand img{height:104px}h1{font-size:23px}}
+
+.hero p{color:var(--tx2);font-size:16.5px;max-width:600px;margin:10px auto 0}
+.big{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.big a{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--tx);background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.big a b{display:block;font-size:16px}.big a span{color:var(--tx2);font-size:13.5px}
+.big a .ic{font-size:24px;flex:0 0 32px;text-align:center}
+.big a.first{background:linear-gradient(90deg,var(--gold),var(--coral));border-color:transparent;color:#1a1206}
+.big a.first span{color:#3a2508}
+</style></head><body>
+<div id="sky" aria-hidden="true"></div><div class="wrap">
+<header><div class="brand" aria-label="AURORA Trading System by Samuele Carraro">
+<div class="lw"><img src="logo.png" alt="AURORA"><span class="shine" aria-hidden="true"></span></div>
+<svg class="divider" viewBox="0 0 210 14" aria-hidden="true"><defs><linearGradient id="dl" x1="0" x2="1"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient><linearGradient id="dr" x1="1" x2="0"><stop offset="0" stop-color="#cfd9ee" stop-opacity="0"/><stop offset="1" stop-color="#cfd9ee" stop-opacity=".8"/></linearGradient></defs><rect x="4" y="6.5" width="88" height="1" fill="url(#dl)"/><rect x="118" y="6.5" width="88" height="1" fill="url(#dr)"/><defs><radialGradient id="fg"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#c9f3ff" stop-opacity=".85"/><stop offset="1" stop-color="#7fd8ff" stop-opacity="0"/></radialGradient></defs><g class="flare"><circle cx="105" cy="7" r="16" fill="url(#fg)"/><path d="M105 -7 L105.8 6 L105 21 L104.2 8Z M64 7 L104 6 L146 7 L104 8Z" fill="#fff"/></g><path class="star" d="M105 0 L107 5 L112 7 L107 9 L105 14 L103 9 L98 7 L103 5Z" fill="#e8eefb"/></svg><div class="ts">Trading System</div><div class="by">by Samuele Carraro</div></div>
+<div class="hero"><h1>Benvenuto in AURORA</h1>
+<p>Un sistema di trading automatico, con un conto reale e risultati pubblicati ogni sera. Senza filtri: guadagni e perdite.</p></div></header>
+<div class="card"><h2>Cos'è AURORA</h2><p>AURORA è un programma che fa trading da solo su valute e indici. Decide quando entrare e quando uscire dal mercato seguendo regole fisse, sempre con un rischio stabilito in partenza e uno stop impostato su ogni operazione. Nessuna emozione, nessuna improvvisazione.</p></div>
+<div class="card"><h2>Chi c'è dietro</h2><p>AURORA è stata creata da Samuele Carraro dopo mesi di ricerca e test su oltre vent'anni di dati di mercato. Oggi lavora su un conto reale, con soldi veri.</p></div>
+<div class="card"><h2>Cosa trovi nel canale</h2><ul><li>Ogni sera alle 22:30, dal lunedì al venerdì, il risultato del giorno del conto reale.</li><li>Anche le giornate in perdita: niente viene nascosto.</li><li>Un voto alla giornata e la pagella del mese, per capire a colpo d'occhio come sta andando.</li></ul></div>
+<div class="card"><h2>Da dove cominciare</h2><div class="big">
+<a class="first" href="come-funziona.html"><span class="ic">⚙️</span><div><b>Come funziona</b><span>Come lavora AURORA e come collegarti</span></div></a>
+<a href="./"><span class="ic">📊</span><div><b>Storico e simulatore</b><span>Come sarebbe andata dal 2003 a oggi, con il capitale che scegli tu</span></div></a>
+<a href="domande-risposte.html"><span class="ic">❓</span><div><b>Domande e risposte</b><span>I dubbi più comuni, con la ricerca</span></div></a>
+</div></div>
+<div class="card"><h2>Rischi</h2><p>Il trading comporta il rischio di perdere in tutto o in parte il capitale. Ci saranno giornate, settimane e anche mesi in perdita.</p></div>
+<footer>Lo storico dal 2003 è una simulazione su dati passati e i risultati passati non garantiscono quelli futuri. Nulla di quanto pubblicato è consulenza finanziaria.</footer></div></body></html>
