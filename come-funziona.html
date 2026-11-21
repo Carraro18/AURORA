@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURORA – Come funziona</title><style>:root{--bg1:#061a3a;--bg2:#0b2e63;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.13);--q:#5ee6c4;--a:#e6edf7;--muted:#9fb3d1;--accent:#7c8cff}
+*{box-sizing:border-box}
+body{margin:0;color:var(--a);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+background:radial-gradient(900px 420px at 15% -5%,rgba(94,230,196,.22),transparent 60%),radial-gradient(800px 380px at 95% 0%,rgba(124,140,255,.25),transparent 60%),linear-gradient(180deg,var(--bg1),var(--bg2));background-attachment:fixed;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+header{text-align:center;margin-bottom:18px}
+.logo{display:block;width:96px;height:96px;margin:0 auto 10px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px rgba(94,230,196,.35),0 8px 30px rgba(0,0,0,.35)}
+.brand{font-size:30px;font-weight:800;letter-spacing:.32em;margin:0;background:linear-gradient(90deg,#5ee6c4,#7c8cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:6px 0 0;color:var(--muted);font-size:15px;letter-spacing:.04em}
+nav{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13.5px}
+nav a.on{color:#04122b;background:linear-gradient(90deg,#5ee6c4,#7c8cff);border-color:transparent;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;backdrop-filter:blur(6px)}
+h2{color:var(--q);font-size:17px;margin:0 0 8px;letter-spacing:.02em}
+p{margin:0 0 8px} ul{margin:0;padding-left:20px} li{margin:4px 0}
+a{color:var(--q)}
+.btn{display:inline-block;text-decoration:none;font-weight:700;color:#04122b;background:linear-gradient(90deg,#5ee6c4,#7c8cff);padding:12px 22px;border-radius:999px}
+.cta{text-align:center} .cta p{color:var(--muted)}
+footer{margin-top:22px;font-size:12.5px;color:var(--muted);line-height:1.5;text-align:center}
+
+.search{position:relative;margin:4px 0 14px}
+.search input{width:100%;padding:13px 16px 13px 44px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--a);font-size:16px;outline:none}
+.search input:focus{border-color:rgba(94,230,196,.6)}
+.search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);opacity:.7}
+.tools{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;color:var(--muted);font-size:13px}
+.tools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+summary{list-style:none;cursor:pointer;padding:15px 48px 15px 18px;position:relative;color:var(--q);font-weight:650;font-size:16.5px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--muted)}
+details[open] summary::after{content:"–"} details[open]{border-color:rgba(94,230,196,.45)}
+.ans{padding:0 18px 16px} .ans p{margin:0}
+.none{display:none;text-align:center;color:var(--muted);padding:14px}
+.step{display:flex;gap:14px;align-items:flex-start;margin:10px 0}
+.num{flex:0 0 32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#04122b;background:linear-gradient(135deg,#5ee6c4,#7c8cff)}
+.small{font-size:13px;color:var(--muted)}
+</style></head><body><div class="wrap">
+<header><img class="logo" src="logo.png" alt="" onerror="this.remove()">
+<h1 class="brand">AURORA</h1><p class="sub">Come funziona</p><nav><a href="index.html">📊 Storico</a><a href="come-funziona.html" class="on">⚙️ Come funziona</a><a href="domande.html">❓ Domande</a></nav></header>
+
+<div class="card"><h2>Cos'è AURORA</h2>
+<p>AURORA è un sistema di trading automatico: decide da solo quando entrare e uscire dal mercato, con un rischio fisso per ogni operazione e uno stop sempre impostato. Tu non devi fare nulla: le operazioni vengono copiate in automatico sul tuo conto.</p></div>
+
+<div class="card"><h2>Come collegarti</h2>
+<div class="step"><div class="num">1</div><div>Apri un conto su FP Trading da questo link:<br><a href="https://portal.fptradingib.com/register?fpm-affiliate-utm-source=IB&amp;fpm-affiliate-agt=478347" target="_blank" rel="noopener">Apri il conto FP Trading</a><br><span class="small">Link di affiliazione: se apri il conto da qui ricevo un compenso dal broker, senza costi aggiuntivi per te.</span></div></div>
+<div class="step"><div class="num">2</div><div>Deposita il capitale che vuoi dedicare (minimo 3.000 €).</div></div>
+<div class="step"><div class="num">3</div><div>Entra nell'area Social Trading / Copy Trading e cerca la strategia AURORA.</div></div>
+<div class="step"><div class="num">4</div><div>Scegli quanto capitale dedicare e conferma.</div></div>
+<div class="step"><div class="num">5</div><div>Da quel momento ogni operazione di AURORA viene replicata sul tuo conto, in proporzione al tuo capitale.</div></div></div>
+
+<div class="card"><h2>Quanto costa</h2><ul>
+<li>Commissione del 30% solo sui guadagni. Se non guadagni, non paghi nulla.</li>
+<li>Restano i normali costi del broker (spread e commissioni).</li></ul></div>
+
+<div class="card"><h2>I tuoi soldi</h2><ul>
+<li>Restano sempre sul tuo conto, a tuo nome, presso il broker.</li>
+<li>Nessuno può prelevarli al posto tuo: AURORA copia solo le operazioni.</li>
+<li>Puoi smettere di copiare quando vuoi, con un clic.</li></ul></div>
+
+<div class="card"><h2>Rischi</h2>
+<p>Il trading comporta il rischio di perdere in tutto o in parte il capitale. Ci saranno giornate, settimane e anche mesi in perdita. Dedica solo soldi che puoi permetterti di vedere scendere. I risultati del conto reale sono pubblicati ogni sera nel canale.</p></div>
+
+<div class="card cta"><p>Hai dubbi?</p><a class="btn" href="domande.html">Leggi le domande frequenti</a></div>
+<footer>Il trading comporta il rischio di perdere in tutto o in parte il capitale. Lo storico dal 2003 è una simulazione su dati passati e i risultati passati non garantiscono quelli futuri. Nulla di quanto pubblicato è consulenza finanziaria.</footer></div></body></html>
