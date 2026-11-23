@@ -420,7 +420,7 @@ function render(o,g,n,excluded,tooShort){
     ${yK.map(y=>{let r=`<tr><th class="y">${y}</th>`;for(let m=0;m<12;m++){const M=months[y*12+m];if(!M){r+='<td></td>';continue;}const p=mp(M);r+=`<td style="${heat(p)}" title="${MESI[m]} ${y}: ${pct(p,2)} · ${eur(M.pnl)}">${num(p,1)}</td>`;}const Y=years[y];r+=`<td style="font-weight:700;background:var(--surface2)">${num(Y.pnl/Y.start*100,1)}</td></tr>`;return r}).join('')}
   </table></div></div>
 
-  ${TG_URL?`<a class="tg" href="${TG_URL}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#2aabee"/><path d="M5.5 11.8l11.2-4.3c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.3-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z" fill="#fff"/></svg><span><b>Segui AURORA su Telegram</b><small>Risultati settimanali del conto reale</small></span><em>Apri il canale →</em></a>`:''}
+  ${TG_URL?`<a class="tg" href="${TG_URL}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#2aabee"/><path d="M5.5 11.8l11.2-4.3c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.3-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z" fill="#fff"/></svg><span><b>Segui AURORA gratis su Telegram</b><small>Il risultato reale ogni sera alle 22:30</small></span><em>Apri il canale →</em></a>`:''}
   <div class="card" style="margin-top:16px">
     <h2>Condividi il simulatore</h2>
     <p class="muted" style="margin:-6px 0 12px">Invia la pagina con il tuo risultato: chi la apre può fare la propria simulazione.</p>
