@@ -261,6 +261,15 @@ function fromTol(){
   o.innerHTML='<div class="hint">Rischio a trade calcolato: '+pct(rp,2)+(c>0?' = '+eur(c*rp/100,c*rp/100<100?2:0):'')+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
   return true;
 }
+// perdita massima dal rischio a trade (il contrario di fromTol): stesso margine di sicurezza
+function fromRisk(){
+  const c=+capEl.value, r=+riskEl.value, o=$('tolOut');
+  if(!(c>0&&r>0))return;
+  const rp=mode==='pct'?r:r/c*100, hd=histDD(rp)*100, t=Math.round(hd*MARGIN*10)/10;
+  $('tol').value=t;
+  if(t>TOLMAX){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: la perdita massima supera il '+TOLMAX+'%.</div>';return;}
+  o.innerHTML='<div class="hint">Perdita massima calcolata dal rischio a trade: '+pct(t,1)+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
+}
 document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{
   if(mode===b.dataset.m)return;
   const c=+capEl.value, r=+riskEl.value;
@@ -274,7 +283,8 @@ document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{
 function setTg(v){dropBest=v;tg.classList.toggle('on',v);tg.setAttribute('aria-checked',v);run();}
 tg.onclick=()=>setTg(!dropBest);
 tg.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();setTg(!dropBest);}};
-[riskEl,taxEl].forEach(e=>e.addEventListener('input',()=>{updHint();clearTimeout(window._t);window._t=setTimeout(run,250);}));
+riskEl.addEventListener('input',()=>{updHint();clearTimeout(window._t);window._t=setTimeout(()=>{fromRisk();run();},250);});
+taxEl.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(run,250);});
 [capEl,$('tol')].forEach(e=>e.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(()=>{fromTol();run();},250);}));
 [y1,y2].forEach(e=>e.addEventListener('change',run));
 
