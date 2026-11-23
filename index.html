@@ -90,6 +90,8 @@ header .intro p{margin:0;color:var(--tx2);max-width:620px;font-size:16px}
 label{display:block;font-size:12px;color:var(--tx2);margin-bottom:6px;font-weight:500}
 input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);color:var(--tx);font:inherit;font-size:15px;outline:none}
 input:focus,select:focus{border-color:var(--accent)}
+.unit{position:relative}.unit input{padding-right:36px}.unit::after{content:attr(data-u);position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--tx2);font-size:15px;pointer-events:none}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .hint{font-size:12.5px;color:var(--gold);margin-top:6px;font-weight:500}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px}
 .seg button{background:transparent;border:0;color:var(--tx2);padding:8px;border-radius:8px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
@@ -181,13 +183,13 @@ footer{margin-top:22px}
   <div class="grid">
     <aside class="card panel">
       <h2>Impostazioni</h2>
-      <div class="field"><label for="cap">Capitale iniziale (€)</label><input id="cap" type="number" inputmode="decimal" min="100" step="any" value="15000"></div>
-      <div class="field"><label for="tol">Perdita massima che accetti (% del capitale)</label><input id="tol" type="number" inputmode="decimal" min="1" max="66" step="any" value="30"><div id="tolOut"></div></div>
+      <div class="field"><label for="cap">Capitale iniziale (€)</label><div class="unit" data-u="€"><input id="cap" type="text" inputmode="numeric" autocomplete="off" value="15.000"></div></div>
+      <div class="field"><label for="tol">Perdita massima che accetti (% del capitale)</label><div class="unit" data-u="%"><input id="tol" type="number" inputmode="decimal" min="1" max="66" step="any" value="30"></div><div id="tolOut"></div></div>
       <div class="field"><label>Come rischiare</label>
         <div class="seg" id="seg"><button type="button" data-m="pct">% del capitale</button><button type="button" data-m="eur" class="on">€ fissi</button></div>
         <div class="muted" id="modeNote" style="margin-top:6px">Stessa cifra a ogni trade, senza interesse composto</div>
       </div>
-      <div class="field"><label for="risk" id="riskLbl">Rischio a trade (€)</label><input id="risk" type="number" inputmode="decimal" min="0.01" step="any" value="75"><div class="hint" id="riskHint"></div><div class="sub" id="dayHint"></div></div>
+      <div class="field"><label for="risk" id="riskLbl">Rischio a trade (€)</label><div class="unit" id="riskWrap" data-u="€"><input id="risk" type="number" inputmode="decimal" min="0.01" step="any" value="75"></div><div class="hint" id="riskHint"></div><div class="sub" id="dayHint"></div></div>
       <div class="row2">
         <div class="field"><label for="y1">Dall'anno</label><select id="y1"></select></div>
         <div class="field"><label for="y2">All'anno</label><select id="y2"></select></div>
@@ -222,6 +224,11 @@ const DAYS=D.map((a,i)=>{const t=new Date(BASE+a[0]*DAY);return{i,t,y:t.getUTCFu
 const Y0=DAYS[0].y, YN=DAYS[DAYS.length-1].y;
 const $=id=>document.getElementById(id);
 const capEl=$('cap'),riskEl=$('risk'),y1=$('y1'),y2=$('y2'),taxEl=$('tax'),tg=$('tg');
+function capVal(){return +String(capEl.value).replace(/\D/g,'');}
+function fmtCap(){const v=capEl.value,pos=capEl.selectionStart??v.length;const before=v.slice(0,pos).replace(/\D/g,'').length;
+  const d=v.replace(/\D/g,'').replace(/^0+(?=\d)/,'');const f=d.replace(/\B(?=(\d{3})+(?!\d))/g,'.');capEl.value=f;
+  let p=0,c=0;while(p<f.length&&c<before){if(/\d/.test(f[p]))c++;p++;}try{capEl.setSelectionRange(p,p);}catch(e){}}
+capEl.addEventListener('input',fmtCap);
 for(let y=Y0;y<=YN;y++){y1.add(new Option(y,y));y2.add(new Option(y,y));}
 y1.value=Math.max(Y0,2020);y2.value=YN;
 let mode='eur', dropBest=false;
@@ -235,7 +242,7 @@ const pct=(v,d=1)=>(v<0?'−':'')+fmt(v,d)+'%';
 const num=(v,d=2)=>(v<0?'−':'')+fmt(v,d);
 
 function updHint(){
-  const c=+capEl.value, r=+riskEl.value;
+  const c=capVal(), r=+riskEl.value;
   if(!(c>0&&r>0)){$('riskHint').textContent='';return;}
   const e=mode==='pct'?c*r/100:r, p=mode==='pct'?r:r/c*100;
   $('riskHint').textContent = mode==='pct' ? '= '+eur(e,e<100?2:0)+' a trade sul capitale iniziale' : '= '+pct(p,2)+' del capitale iniziale';
@@ -253,7 +260,7 @@ function riskForTol(t){const target=t/100/MARGIN; let lo=0.001,hi=10;
   return Math.max(Math.round(lo*100)/100,0.01);}
 let _rmax=null; const RMAX=()=>_rmax??(_rmax=riskForTol(TOLMAX)); // rischio massimo a trade (%) ammesso
 function fromTol(){
-  const t=+$('tol').value, o=$('tolOut'), c=+capEl.value;
+  const t=+$('tol').value, o=$('tolOut'), c=capVal();
   if(!(t>0)){o.innerHTML='';return false;}
   if(t>66){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: il massimo è 66%.</div>';return false;}
   const rp=riskForTol(t), hd=histDD(rp)*100;
@@ -263,7 +270,7 @@ function fromTol(){
 }
 // perdita massima dal rischio a trade (il contrario di fromTol): stesso margine di sicurezza
 function fromRisk(){
-  const c=+capEl.value, r=+riskEl.value, o=$('tolOut');
+  const c=capVal(), r=+riskEl.value, o=$('tolOut');
   if(!(c>0&&r>0))return;
   const rp=mode==='pct'?r:r/c*100, hd=histDD(rp)*100, t=Math.round(hd*MARGIN*10)/10;
   $('tol').value=t;
@@ -272,11 +279,12 @@ function fromRisk(){
 }
 document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{
   if(mode===b.dataset.m)return;
-  const c=+capEl.value, r=+riskEl.value;
+  const c=capVal(), r=+riskEl.value;
   mode=b.dataset.m;
   document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));
   if(c>0&&r>0) riskEl.value = mode==='eur' ? Math.round(c*r/100*100)/100 : Math.round(r/c*100*1000)/1000;
   $('riskLbl').textContent = mode==='pct'?'Rischio a trade (%)':'Rischio a trade (€)';
+  $('riskWrap').dataset.u = mode==='pct'?'%':'€';
   $('modeNote').textContent = mode==='pct'?'Il rischio cresce con il conto (interesse composto)':'Stessa cifra a ogni trade, senza interesse composto';
   run();
 });
@@ -321,7 +329,7 @@ let chart=null, scaleType='linear';
 function run(){
   updHint();
   let a=+y1.value,b=+y2.value; if(b<a){[a,b]=[b,a];}
-  const o={cap:+capEl.value,mode,risk:+riskEl.value,y1:a,y2:b,tax:+taxEl.value||0};
+  const o={cap:capVal(),mode,risk:+riskEl.value,y1:a,y2:b,tax:+taxEl.value||0};
   if(!(o.cap>0&&o.risk>0))return;
   const tol=+$('tol').value, rp=o.mode==='pct'?o.risk:o.risk/o.cap*100, rm=RMAX();
   if(tol>TOLMAX||rp>rm+0.0001){
