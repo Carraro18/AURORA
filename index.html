@@ -221,7 +221,7 @@ footer{margin-top:22px}
 <script>
 const BASE=Date.UTC(2003,0,1), DAY=86400000;
 const MESI=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-const DAYS=D.map((a,i)=>{const t=new Date(BASE+a[0]*DAY);return{i,t,y:t.getUTCFullYear(),m:t.getUTCMonth(),k:t.toISOString().slice(0,10),r:a.slice(1).map(x=>x/100)}});
+const DAYS=D.map((a,i)=>{const t=new Date(BASE+a[0]*DAY);return{i,t,y:t.getUTCFullYear(),m:t.getUTCMonth(),k:t.toISOString().slice(0,10),r:a.slice(1).map(x=>x/1000)}});
 const Y0=DAYS[0].y, YN=DAYS[DAYS.length-1].y;
 const $=id=>document.getElementById(id);
 const capEl=$('cap'),riskEl=$('risk'),y1=$('y1'),y2=$('y2'),taxEl=$('tax'),tg=$('tg');
@@ -249,10 +249,9 @@ function updHint(){
   $('riskHint').textContent = mode==='pct' ? '= '+eur(e,e<100?2:0)+' a trade sul capitale iniziale' : '= '+pct(p,2)+' del capitale iniziale';
   $('dayHint').textContent='Rischio massimo giornaliero: '+eur(MAXT*e,MAXT*e<100?2:0)+' ('+pct(MAXT*p,1)+' del capitale), se tutti i trade del giorno chiudono in perdita';
 }
-// rischio a trade dalla perdita massima accettata: il peggior calo storico (2003-oggi) deve restare entro 2/3 della soglia
 function histDD(rp){
-  const days=DAYS; const S=slow(Y0); let eq=1,pk=1,mdd=0;
-  for(const d of days){let k=rp/100*(S.has(d.i)?0.5:1);eq*=1+d.r.reduce((a,b)=>a+b,0)*k;if(eq<=0)return 1;if(eq>pk)pk=eq;const dd=1-eq/pk;if(dd>mdd)mdd=dd;}
+  const days=DAYS; let eq=1,pk=1,mdd=0;
+  for(const d of days){let k=rp/100;eq*=1+d.r.reduce((a,b)=>a+b,0)*k;if(eq<=0)return 1;if(eq>pk)pk=eq;const dd=1-eq/pk;if(dd>mdd)mdd=dd;}
   return mdd;
 }
 const MARGIN=1.5, TOLMAX=66;
@@ -269,7 +268,6 @@ function fromTol(){
   o.innerHTML='<div class="hint">Rischio a trade calcolato: '+pct(rp,2)+(c>0?' = '+eur(c*rp/100,c*rp/100<100?2:0):'')+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
   return true;
 }
-// perdita massima dal rischio a trade (il contrario di fromTol): stesso margine di sicurezza
 function fromRisk(){
   const c=capVal(), r=+riskEl.value, o=$('tolOut');
   if(!(c>0&&r>0))return;
@@ -297,10 +295,9 @@ taxEl.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout
 [capEl,$('tol')].forEach(e=>e.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(()=>{fromTol();run();},250);}));
 [y1,y2].forEach(e=>e.addEventListener('change',run));
 
-function slow(startY){const s=new Set();(Q[startY]||[]).forEach(([a,b])=>{for(let i=a;i<=b;i++)s.add(i)});return s;}
 
 function simulate(o,days,payTax){
-  const S=slow(o.y1);
+  const V=X[o.y1];
   let eq=o.cap, ruined=false, curY=null, yStart=eq, carry=[], totTax=0;
   const curve=[];
   function closeYear(y){
@@ -317,10 +314,10 @@ function simulate(o,days,payTax){
     curY=d.y;
     if(ruined){curve.push({...d,eq:0,pnl:0});continue;}
     let risk=o.mode==='pct'?eq*o.risk/100:o.risk;
-    if(S.has(d.i))risk*=0.5;
-    const pnl=d.r.reduce((a,b)=>a+b,0)*risk;
+    const v=V&&V[d.i], r=v?v.map(x=>x/1000):d.r;
+    const pnl=r.reduce((a,b)=>a+b,0)*risk;
     eq+=pnl; if(eq<=0){eq=0;ruined=true;}
-    curve.push({...d,eq,pnl});
+    curve.push({...d,r,eq,pnl});
   }
   if(curY!==null)closeYear(curY);
   return{curve,eq,totTax,ruined};
