@@ -184,7 +184,7 @@ footer{margin-top:22px}
     <aside class="card panel">
       <h2>Impostazioni</h2>
       <div class="field"><label for="cap">Capitale iniziale (€)</label><div class="unit" data-u="€"><input id="cap" type="text" inputmode="numeric" autocomplete="off" value="3.000"></div><div class="sub">Capitale minimo per copiare AURORA: 3.000 €</div></div>
-      <div class="field"><label for="tol">Perdita massima che accetti (% del capitale)</label><div class="unit" data-u="%"><input id="tol" type="number" inputmode="decimal" min="1" max="66" step="any" value="30"></div><div id="tolOut"></div></div>
+      <div class="field"><label for="tol">Perdita massima che accetti (% del capitale)</label><div class="unit" data-u="%"><input id="tol" type="number" inputmode="decimal" min="1" max="78" step="any" value="30"></div><div id="tolOut"></div></div>
       <div class="field"><label>Come rischiare</label>
         <div class="seg" id="seg"><button type="button" data-m="pct">% del capitale</button><button type="button" data-m="eur" class="on">€ fissi</button></div>
         <div class="muted" id="modeNote" style="margin-top:6px">Stessa cifra a ogni trade, senza interesse composto</div>
@@ -255,18 +255,21 @@ function histDD(rp){
   for(const d of days){let k=rp/100;eq*=1+d.r.reduce((a,b)=>a+b,0)*k;if(eq<=0)return 1;if(eq>pk)pk=eq;const dd=1-eq/pk;if(dd>mdd)mdd=dd;}
   return mdd;
 }
-const MARGIN=1.5, TOLMAX=66;
+const MARGIN=1.5, TOLWARN=66, RHARD=1.5;
 function riskForTol(t){const target=t/100/MARGIN; let lo=0.001,hi=10;
   for(let k=0;k<40;k++){const m=(lo+hi)/2; if(histDD(m)>target)hi=m; else lo=m;}
   return Math.max(Math.round(lo*100)/100,0.01);}
-let _rmax=null; const RMAX=()=>_rmax??(_rmax=riskForTol(TOLMAX)); // rischio massimo a trade (%) ammesso
+const TOLMAX=Math.ceil(histDD(RHARD)*MARGIN*1000)/10; // perdita massima ammessa (corrisponde all'1,5% a trade, profilo Aggressivo)
+const RMAX=()=>RHARD; // rischio massimo a trade (%) ammesso
+let _rwarn=null; const RWARN=()=>_rwarn??(_rwarn=riskForTol(TOLWARN)); // oltre questo rischio: avviso rosso
+const warnHigh=rp=>'<div class="card warn" style="font-size:15px;line-height:1.5"><b>⚠️ Rischio molto alto (profilo Aggressivo).</b><br>Nel periodo peggiore dello storico avresti perso circa il '+pct(histDD(rp)*100,0)+' del conto. Scegli questo rischio solo se sei disposto a sopportare cali così forti.</div>';
 function fromTol(){
   const t=+$('tol').value, o=$('tolOut'), c=capVal();
   if(!(t>0)){o.innerHTML='';return false;}
-  if(t>66){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: il massimo è 66%.</div>';return false;}
+  if(t>TOLMAX){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: il massimo è '+pct(TOLMAX,1)+'.</div>';return false;}
   const rp=riskForTol(t), hd=histDD(rp)*100;
   riskEl.value = mode==='pct' ? rp : Math.round(c*rp/100*100)/100;
-  o.innerHTML='<div class="hint">Rischio a trade calcolato: '+pct(rp,2)+(c>0?' = '+eur(c*rp/100,c*rp/100<100?2:0):'')+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
+  o.innerHTML=(rp>RWARN()+0.0001?'<div class="err">Rischio molto alto: profilo Aggressivo.</div>':'')+'<div class="hint">Rischio a trade calcolato: '+pct(rp,2)+(c>0?' = '+eur(c*rp/100,c*rp/100<100?2:0):'')+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
   return true;
 }
 function fromRisk(){
@@ -274,8 +277,8 @@ function fromRisk(){
   if(!(c>0&&r>0))return;
   const rp=mode==='pct'?r:r/c*100, hd=histDD(rp)*100, t=Math.round(hd*MARGIN*10)/10;
   $('tol').value=t;
-  if(t>TOLMAX){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: la perdita massima supera il '+TOLMAX+'%.</div>';return;}
-  o.innerHTML='<div class="hint">Perdita massima calcolata dal rischio a trade: '+pct(t,1)+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
+  if(t>TOLMAX){o.innerHTML='<div class="err">Rischio troppo elevato per il capitale indicato: la perdita massima supera il '+pct(TOLMAX,1)+'.</div>';return;}
+  o.innerHTML=(rp>RWARN()+0.0001?'<div class="err">Rischio molto alto: profilo Aggressivo.</div>':'')+'<div class="hint">Perdita massima calcolata dal rischio a trade: '+pct(t,1)+'</div><div class="sub">Nel periodo peggiore della storia avresti perso il '+pct(hd,0)+': resta un margine di sicurezza, perché il futuro può essere peggio del passato.</div>';
 }
 document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{
   if(mode===b.dataset.m)return;
@@ -338,7 +341,7 @@ function run(){
     if(chart){chart.destroy();chart=null;}
     const maxE=o.cap*rm/100;
     $('riskHint').innerHTML='<span class="err" style="margin:0">Rischio troppo elevato per il capitale indicato</span>';
-    $('out').innerHTML=`<div class="card warn" style="font-size:15px;line-height:1.5"><b>⛔ Rischio troppo elevato per il capitale indicato.</b><br>Con ${eur(o.cap)} di capitale il rischio massimo a trade è <b>${eur(maxE,maxE<100?2:0)} (${pct(rm,2)})</b>, che corrisponde alla perdita massima accettabile del ${TOLMAX}%.<br>Hai inserito ${o.mode==='pct'?pct(rp,2)+' = '+eur(o.cap*rp/100,0):eur(o.risk,0)+' = '+pct(rp,2)} a trade: abbassa il rischio per vedere la simulazione.</div>`;
+    $('out').innerHTML=`<div class="card warn" style="font-size:15px;line-height:1.5"><b>⛔ Rischio troppo elevato per il capitale indicato.</b><br>Con ${eur(o.cap)} di capitale il rischio massimo a trade è <b>${eur(maxE,maxE<100?2:0)} (${pct(rm,2)})</b>, che corrisponde alla perdita massima accettabile del ${pct(TOLMAX,1)}.<br>Hai inserito ${o.mode==='pct'?pct(rp,2)+' = '+eur(o.cap*rp/100,0):eur(o.risk,0)+' = '+pct(rp,2)} a trade: abbassa il rischio per vedere la simulazione.</div>`;
     return;
   }
   let days=DAYS.filter(d=>d.y>=a&&d.y<=b), excluded=[];
@@ -373,7 +376,8 @@ function render(o,g,n,excluded,tooShort){
   const period=o.y1+'–'+o.y2;
   window._s={o,g,n,grossP,netP,cg,cn,mdd,nT,w,posM,mA,posY,yK,riskTxt,excluded,period};
 
-  out.innerHTML=`
+  const rpw=o.mode==='pct'?o.risk:o.risk/o.cap*100;
+  out.innerHTML=(rpw>RWARN()+0.0001?warnHigh(rpw):'')+`
   ${g.ruined?'<div class="card warn">Con questo rischio il conto sarebbe andato a zero: prova un rischio più basso.</div>':''}
   ${excluded.length?`<div class="excl">Anni esclusi dal calcolo: ${excluded.join(' e ')}</div>`:''}
   ${tooShort?'<div class="excl">Per togliere i 2 anni migliori scegli un periodo di almeno 4 anni.</div>':''}
