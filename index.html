@@ -183,7 +183,7 @@ footer{margin-top:22px}
   <div class="grid">
     <aside class="card panel">
       <h2>Impostazioni</h2>
-      <div class="field"><label for="cap">Capitale iniziale (€)</label><div class="unit" data-u="€"><input id="cap" type="text" inputmode="numeric" autocomplete="off" value="15.000"></div></div>
+      <div class="field"><label for="cap">Capitale iniziale (€)</label><div class="unit" data-u="€"><input id="cap" type="text" inputmode="numeric" autocomplete="off" value="3.000"></div><div class="sub">Capitale minimo per copiare AURORA: 3.000 €</div></div>
       <div class="field"><label for="tol">Perdita massima che accetti (% del capitale)</label><div class="unit" data-u="%"><input id="tol" type="number" inputmode="decimal" min="1" max="66" step="any" value="30"></div><div id="tolOut"></div></div>
       <div class="field"><label>Come rischiare</label>
         <div class="seg" id="seg"><button type="button" data-m="pct">% del capitale</button><button type="button" data-m="eur" class="on">€ fissi</button></div>
@@ -210,7 +210,7 @@ footer{margin-top:22px}
       <li><b>Non è consulenza.</b> Questa pagina ha solo scopo informativo: non è una raccomandazione personalizzata, una consulenza in materia di investimenti né un'offerta o sollecitazione all'investimento. Ogni decisione resta sotto la tua responsabilità; per valutazioni sulla tua situazione rivolgiti a un consulente autorizzato.</li>
       <li><b>Errori e problemi tecnici.</b> Un sistema automatico può subire perdite, errori e problemi tecnici (connessione, broker, esecuzione degli ordini).</li>
       <li><b>Responsabilità.</b> Chi decide di copiare AURORA lo fa per propria scelta e si assume interamente i rischi dell'investimento.</li>
-      <li><b>FEE.</b> Tutti i risultati, compreso il guadagno netto, sono già al netto delle tasse ma non della FEE 30% sui guadagni per chi copia AURORA.</li>
+      <li><b>FEE e guadagno netto.</b> Il guadagno lordo è prima di FEE e tasse. Il guadagno netto toglie la FEE 30% (calcolata ogni settimana, solo sulla parte di conto sopra il massimo già raggiunto) e poi le tasse sul guadagno che resta. Se la FEE non fosse deducibile dalle tasse, il netto reale sarebbe un po' più basso.</li>
       <li><b>Tasse.</b> Le imposte sono una stima semplificata (aliquota unica, perdite compensate nei 4 anni successivi) e non sono consulenza fiscale.</li>
       <li><b>Dettagli tecnici.</b> Trade ricostruiti su dati a 1 minuto; calo massimo misurato sulle chiusure giornaliere (dentro la giornata può essere stato maggiore).</li>
     </ul>
@@ -236,6 +236,7 @@ let mode='eur', dropBest=false;
 const PAGE_URL='https://carraro18.github.io/AURORA/';
 const TG_URL='https://t.me/+cAgJJ-rI9ok3ZTY8'; // link del canale Telegram (es. https://t.me/nomecanale)
 const MAXT=Math.max(...DAYS.map(d=>d.r.length));
+const CAPMIN=3000, FEE=30;
 
 const fmt=(v,d)=>Math.abs(v).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:'always'});
 const eur=(v,d=0)=>(v<0?'−':'')+'€ '+fmt(v,d);
@@ -298,7 +299,8 @@ taxEl.addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout
 
 function simulate(o,days,payTax){
   const V=X[o.y1];
-  let eq=o.cap, ruined=false, curY=null, yStart=eq, carry=[], totTax=0;
+  let eq=o.cap, ruined=false, curY=null, yStart=eq, carry=[], totTax=0, acc=o.cap, hwm=o.cap, totFee=0;
+  const wk=t=>Math.floor((t.getTime()/DAY+3)/7);
   const curve=[];
   function closeYear(y){
     const p=eq-yStart; let tax=0;
@@ -309,26 +311,28 @@ function simulate(o,days,payTax){
     }
     totTax+=tax; if(payTax)eq-=tax; yStart=eq;
   }
-  for(const d of days){
+  for(let k=0;k<days.length;k++){const d=days[k];
     if(curY!==null&&d.y!==curY)closeYear(curY);
     curY=d.y;
     if(ruined){curve.push({...d,eq:0,pnl:0});continue;}
     let risk=o.mode==='pct'?eq*o.risk/100:o.risk;
     const v=V&&V[d.i], r=v?v.map(x=>x/1000):d.r;
     const pnl=r.reduce((a,b)=>a+b,0)*risk;
-    eq+=pnl; if(eq<=0){eq=0;ruined=true;}
+    eq+=pnl; acc+=pnl; if(eq<=0){eq=0;ruined=true;}
+    if(payTax&&o.fee>0&&!ruined&&(k===days.length-1||wk(days[k+1].t)!==wk(d.t))&&acc>hwm){const f=(acc-hwm)*o.fee/100;acc-=f;eq-=f;hwm=acc;totFee+=f;}
     curve.push({...d,r,eq,pnl});
   }
   if(curY!==null)closeYear(curY);
-  return{curve,eq,totTax,ruined};
+  return{curve,eq,totTax,totFee,ruined};
 }
 
 let chart=null, scaleType='linear';
 function run(){
   updHint();
   let a=+y1.value,b=+y2.value; if(b<a){[a,b]=[b,a];}
-  const o={cap:capVal(),mode,risk:+riskEl.value,y1:a,y2:b,tax:+taxEl.value||0};
-  if(!(o.cap>0&&o.risk>0))return;
+  const o={cap:capVal(),mode,risk:+riskEl.value,y1:a,y2:b,tax:+taxEl.value||0,fee:FEE};
+  if(o.cap<CAPMIN){if(chart){chart.destroy();chart=null;}$('out').innerHTML=`<div class="card warn" style="font-size:15px;line-height:1.5"><b>Il capitale minimo per copiare AURORA è ${eur(CAPMIN)}.</b><br>Inserisci un capitale di almeno ${eur(CAPMIN)} per vedere la simulazione.</div>`;return;}
+  if(!(o.risk>0))return;
   const tol=+$('tol').value, rp=o.mode==='pct'?o.risk:o.risk/o.cap*100, rm=RMAX();
   if(tol>TOLMAX||rp>rm+0.0001){
     if(chart){chart.destroy();chart=null;}
@@ -378,7 +382,7 @@ function render(o,g,n,excluded,tooShort){
     <div class="hp"><div class="l">Guadagno netto nel periodo</div><div class="pv ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,netP/o.cap*100>=1000?0:1)}</div><div class="n">${pct(cn)} medio all'anno</div></div>
   </div>
   <div class="kpis3">
-    <div class="kpi"><div class="l">Guadagno netto</div><div class="v">${eur(netP)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,0)}</div><div class="n">dopo ${eur(n.totTax)} di tasse · FEE 30% esclusa</div></div>
+    <div class="kpi"><div class="l">Guadagno netto</div><div class="v">${eur(netP)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,0)}</div><div class="n">dopo ${eur(n.totFee)} di FEE e ${eur(n.totTax)} di tasse</div></div>
     <div class="kpi"><div class="l">Guadagno lordo</div><div class="v">${eur(grossP)}</div><div class="pc ${grossP<0?'neg':''}">${grossP>=0?'+':''}${pct(grossP/o.cap*100,0)}</div><div class="n">${pct(cg)} medio all'anno</div></div>
     <div class="kpi"><div class="l">Guadagno medio annuo</div><div class="v">${eur(netP/yrs)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100/yrs,1)} all'anno</div><div class="n">lordo ${eur(grossP/yrs)} (${pct(grossP/o.cap*100/yrs,1)})</div></div>
     <div class="kpi"><div class="l">Calo massimo</div><div class="v">${pct(-mdd)}</div><div class="pc neg" style="font-size:14px">${eur(-mddE)}</div><div class="n">nel momento peggiore</div></div>
@@ -387,7 +391,7 @@ function render(o,g,n,excluded,tooShort){
 
   <div class="card">
     <div class="chead"><h2>Andamento del conto</h2><div class="tabs"><button data-s="linear" class="${scaleType==='linear'?'on':''}">Normale</button><button data-s="logarithmic" class="${scaleType!=='linear'?'on':''}">Logaritmica</button></div></div>
-    <div class="legend"><span><i style="background:var(--s1)"></i>Lordo</span><span><i style="background:var(--s2)"></i>Netto (tasse pagate ogni anno)</span></div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>Lordo</span><span><i style="background:var(--s2)"></i>Netto (FEE 30% e tasse)</span></div>
     <div class="chartbox"><canvas id="cEq" aria-label="Grafico del capitale nel tempo"></canvas></div>
   </div>
 
@@ -461,7 +465,7 @@ Rischio: ${s.riskTxt}
 
 💰 Capitale finale netto: ${eur(s.n.eq)}
 📈 Guadagno lordo: ${eur(s.grossP)} (${pct(s.cg)} l'anno)
-🧾 Guadagno netto (tasse ${num(o.tax,0)}%): ${eur(s.netP)} (${pct(s.cn)} l'anno)
+🧾 Guadagno netto (FEE 30% e tasse ${num(o.tax,0)}%): ${eur(s.netP)} (${pct(s.cn)} l'anno)
 📉 Calo massimo: ${pct(-s.mdd)}
 🎯 Trade vincenti: ${pct(s.w/s.nT*100)} su ${s.nT.toLocaleString('it-IT')}
 🗓 Mesi positivi: ${s.posM}/${s.mA.length} · anni positivi: ${s.posY}/${s.yK.length}
