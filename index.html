@@ -382,7 +382,7 @@ function render(o,g,n,excluded,tooShort){
     <div class="hp"><div class="l">Guadagno netto nel periodo</div><div class="pv ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,netP/o.cap*100>=1000?0:1)}</div><div class="n">${pct(cn)} medio all'anno</div></div>
   </div>
   <div class="kpis3">
-    <div class="kpi"><div class="l">Guadagno netto</div><div class="v">${eur(netP)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,0)}</div><div class="n">dopo ${eur(n.totFee)} di FEE e ${eur(n.totTax)} di tasse</div></div>
+    <div class="kpi"><div class="l">Guadagno netto</div><div class="v">${eur(netP)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100,0)}</div><div class="n">già al netto di FEE e tasse</div></div>
     <div class="kpi"><div class="l">Guadagno lordo</div><div class="v">${eur(grossP)}</div><div class="pc ${grossP<0?'neg':''}">${grossP>=0?'+':''}${pct(grossP/o.cap*100,0)}</div><div class="n">${pct(cg)} medio all'anno</div></div>
     <div class="kpi"><div class="l">Guadagno medio annuo</div><div class="v">${eur(netP/yrs)}</div><div class="pc ${netP<0?'neg':''}">${netP>=0?'+':''}${pct(netP/o.cap*100/yrs,1)} all'anno</div><div class="n">lordo ${eur(grossP/yrs)} (${pct(grossP/o.cap*100/yrs,1)})</div></div>
     <div class="kpi"><div class="l">Calo massimo</div><div class="v">${pct(-mdd)}</div><div class="pc neg" style="font-size:14px">${eur(-mddE)}</div><div class="n">nel momento peggiore</div></div>
