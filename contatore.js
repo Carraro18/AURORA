@@ -1,12 +1,12 @@
-/* AURORA – contatore privato v1.00 (GoatCounter, senza cookie)
+/* AURORA – contatore privato v1.01 (GoatCounter, senza cookie)
    Da caricare in ogni pagina, subito prima di </body>:
    <script data-goatcounter="https://aurorab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
    <script src="contatore.js"></script>
    (account GoatCounter: AuroraB → aurorab.goatcounter.com)
+   v1.01: tolto il conteggio di fin dove si legge (scelta di Samuele: chi apre una pagina la legge)
 
    Cosa conta:
    - visite di ogni pagina (lo fa GoatCounter da solo)
-   - fin dove si legge ogni pagina: evento "lettura/<pagina>/<n>-<titolo sezione>"
    - clic sui link: "clic/<pagina>/telegram", "clic/<pagina>/<pagina di arrivo>"
    - test: "test/iniziato", "test/esito/rosso|giallo|verde",
            "test/profilo/P|D|A" (solo verdi), "test/domanda-N/risposta-K"
@@ -28,30 +28,7 @@
     })();
   }
 
-  // 1) Fin dove si legge: una tappa per ogni titolo di sezione (h2) che entra nello schermo
-  function tappeLettura() {
-    if (pagina === 'test' || !('IntersectionObserver' in window)) return;
-    var titoli = document.querySelectorAll('h2');
-    var obs = new IntersectionObserver(function (voci) {
-      voci.forEach(function (v) {
-        if (!v.isIntersecting) return;
-        var i = Array.prototype.indexOf.call(titoli, v.target) + 1;
-        var nome = (v.target.textContent || '').trim().toLowerCase()
-          .replace(/[^a-z0-9àèéìòù]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
-        conta('lettura/' + pagina + '/' + (i < 10 ? '0' : '') + i + '-' + nome);
-        obs.unobserve(v.target);
-      });
-    }, { threshold: 0.6 });
-    titoli.forEach(function (t) { obs.observe(t); });
-    // fondo pagina raggiunto
-    window.addEventListener('scroll', function () {
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 80) {
-        conta('lettura/' + pagina + '/99-fondo-pagina');
-      }
-    }, { passive: true });
-  }
-
-  // 2) Clic sui link (Telegram, altre pagine, FP)
+  // 1) Clic sui link (Telegram, altre pagine, FP)
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
@@ -63,7 +40,7 @@
     conta('clic/' + pagina + '/' + dove);
   }, true);
 
-  // 3) Test "Sei pronto per AURORA?"
+  // 2) Test "Sei pronto per AURORA?"
   function agganciaTest() {
     if (pagina !== 'test') return;
     if (typeof window.pick === 'function') {
@@ -107,6 +84,6 @@
   }, true);
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { tappeLettura(); agganciaTest(); });
-  } else { tappeLettura(); agganciaTest(); }
+    document.addEventListener('DOMContentLoaded', agganciaTest);
+  } else { agganciaTest(); }
 })();
